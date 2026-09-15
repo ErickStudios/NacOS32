@@ -177,7 +177,9 @@ void k_main()
         char ky;
         char jitc[64];
         int jiti = 0;
+        terminal_color = 0xA;
         tty_print("@ ");
+        terminal_color = 7;
         do {
             ky = keyboard_read_char();
 
@@ -212,8 +214,15 @@ void k_main()
         typedef int (*Functor)();
         Functor fn = (Functor)jat;
         int r = fn();
-        tty_print_dec(r);
-        tty_putchar('\n');
+
+        if (sjit != 1) {
+            terminal_color = 0x9;
+            tty_print("ok ");
+            terminal_color = 0xB;
+            tty_print_dec(r);
+            terminal_color = 7;
+            tty_putchar('\n');
+        }
     }
 
 	while(1);
