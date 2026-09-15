@@ -179,7 +179,7 @@ u8 TryParse(char* code, u32* size, u8* jit, FunctionTable* func_table) {
                     *(u32*) (jit + *size + 1) = 0;
                     *size += 5;
                     jit[*size++] = 0x58;
-                    jit[*size] = 0x83;
+                    jit[*size] = 0x5;
                     *(u32*) (jit + *size + 1) = 4;
                     *size += 5;
                     char id_name[MAX_NAME_LEN];
@@ -198,7 +198,7 @@ u8 TryParse(char* code, u32* size, u8* jit, FunctionTable* func_table) {
                     u32 target_pc = FindFunctionPC(func_table, id_name);
                     if (target_pc != 0xFFFFFFFF) {
                         jit[*size] = 0x05;
-                        i32 rel_offset = (i32)target_pc - (i32)(*size);
+                        i32 rel_offset = (i32)target_pc - (i32)(*size + 5);
                         *(u32*) (jit + *size + 1) = rel_offset;
                         *size += 5;
                     } 
