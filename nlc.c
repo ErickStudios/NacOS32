@@ -238,6 +238,20 @@ u8 TryParse(char* code, u32* size, u8* jit, FunctionTable* func_table) {
             jit[*size] = 0xC3;
             *size += 1;
         }
+        // Byte insertion
+        else if (code[it] == 'b' && code[it + 1] == '$') {
+            it += 2;
+            while (IsSpace(code[it]) it++;
+            while (code[it] != ';') {
+                i32 x = ParseU32(code, &it);
+                u8 b = ((u8)x) ;
+                jit[*size] = b;
+                *size++;
+                while (IsSpace(code[it])) it++;
+            }
+            it++;
+        } 
+        // Lang identifiers
         else if ((code[it] >= 'a' && code[it] <= 'z') || (code[it] >= 'A' && code[it] <= 'Z') || code[it] == '_') {
             char id_name[MAX_NAME_LEN];
             u32 id_idx = 0;
