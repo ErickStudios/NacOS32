@@ -270,7 +270,7 @@ u8 TryParse(char* code, u32* size, u8* jit, FunctionTable* func_table) {
         // Byte insertion
         else if (code[it] == 'b' && code[it + 1] == '$') {
             it += 2;
-            while (IsSpace(code[it]) it++;
+            while (IsSpace(code[it])) it++;
             while (code[it] != ';') {
                 i32 x = ParseU32(code, &it);
                 u8 b = ((u8)x) ;
