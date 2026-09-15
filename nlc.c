@@ -158,7 +158,7 @@ u8 TryParse(char* code, u32* size, u8* jit, FunctionTable* func_table) {
                     is_self = 1;
                     it++;
                 } else {
-                    next_val = ParseU32(code, &it);
+                    if (op != '!') next_val = ParseU32(code, &it);
                 }
 
                 if (op == '+') {
@@ -173,6 +173,35 @@ u8 TryParse(char* code, u32* size, u8* jit, FunctionTable* func_table) {
                         *(u32*)(jit + *size + 1) = next_val;
                         *size += 5;
                     }
+                } 
+                else if (op == '!') {
+                    jit[*size] = 0xE8;
+                    *(u32*) (jit + *size + 1) = 0;
+                    *size += 5;
+                    jit[*size++] = 0x58;
+                    jit[*size] = 0x83;
+                    *(u32*) (jit + *size + 1) = 4;
+                    *size += 5;
+                    char id_name[MAX_NAME_LEN];
+                    int uidx = 0;
+                    while (code[it] != '\0' && (
+                   (code[it] >= 'a' && code[it] <= 'z') || 
+                   (code[it] >= 'A' && code[it] <= 'Z') || 
+                   (code[it] >= '0' && code[it] <= '9') || 
+                   code[it] == '_')) {
+                        if (uidx < MAX_NAME_LEN - 1) { 
+                            id_name[uidx++] = code[it] ;
+                        } 
+                        it++;
+                    } 
+                    id_name[uidx] = 0;
+                    u32 target_pc = FindFunctionPC(func_table, id_name);
+                    if (target_pc != 0xFFFFFFFF) {
+                        jit[*size] = 0x05;
+                        i32 rel_offset = (i32)target_pc - (i32)(*size);
+                        *(u32*) (jit + *size + 1) = rel_offset;
+                        *size += 5;
+                    } 
                 } 
                 else if (op == '-') {
                     if (is_self) {
