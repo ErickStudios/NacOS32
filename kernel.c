@@ -167,10 +167,23 @@ void tty_print_dec(int n) {
 
 void k_main()
 {
-	u8 buf[512];
-	ata_read_sector(0, buf);
-	u16* buf2 = (u16*)buf;
-    
+    u8 sector_buf[512];
+    ata_read_sector(0, sector_buf);
+
+    //"$b 5 ? 4; @jl_ j2 $0xb8000; @l $w0x7054; @ww ret fn j2 $0xb8000; @l $w0x7046; @ww ret"
+    /*char jit2[200];
+    char* jat2 = jit2;
+    int sjit2 = 0;
+    TryParseRt("#b $0xB8000; $w0x1F48; @ww #a=b $+2; @l $w0x1F49; @ww ret", &sjit2, jat2);
+    typedef int (*Functor)();
+        
+    Functor fn2 = (Functor)jat2;
+    asm volatile("pushl %ebx");
+    int r = fn2();
+    asm volatile("popl %ebx");
+
+    while (1);*/
+
     while (1)
     {
         // Wait for the Buffer Reading
@@ -212,8 +225,11 @@ void k_main()
         int sjit = 0;
         TryParseRt(jitca, &sjit, jat);
         typedef int (*Functor)();
+        
         Functor fn = (Functor)jat;
+        asm volatile("pushl %ebx");
         int r = fn();
+        asm volatile("popl %ebx");
 
         if (sjit != 1) {
             terminal_color = 0x9;
